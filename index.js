@@ -21,8 +21,6 @@ function getChatId(chat_id) {
     if(res.length==0) {
         return 0;
     } else {
-        console.log('chatExists', res);
-        console.log('chatExists', res[0].id);
         return res[0].id;
     }
 }
