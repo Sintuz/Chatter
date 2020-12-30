@@ -1,0 +1,27 @@
+{
+  "name": "chatter",
+  "description": "Chatter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sintuz/Chatter.git"
+  },
+  "author": "Sintuz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sintuz/Chatter/issues"
+  },
+  "homepage": "https://github.com/Sintuz/Chatter#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "node-telegram-bot-api": "^0.51.0",
+    "nodemon": "^2.0.6",
+    "sync-mysql": "^3.0.1"
+  }
+}
