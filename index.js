@@ -1,52 +1,33 @@
-const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
-const mySql = require('sync-mysql');
 
+const TelegramBot = require('node-telegram-bot-api');
 const bot = new TelegramBot(process.env.BOT_TOKEN, {polling: true});
 
-// connecting to db
-const db = new mySql({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+
+const db = require('./db');
+
+const express = require('express');
+const app = express();
+
+
+app.use(express.static('./public'));
+
+app.post('/get_chats', (req, res) => {
+    let chats = db.getChats();
+
+    chats.forEach((chat, i) => {
+        chats[i].has_unread = db.getChatStatus(chat.id);
+        chats[i].message = {
+            content: db.getMessages(chat.id, 0, 1)[0].content,
+            time: new Date(db.getLastMessageTime(chat.id))
+        };
+    });
+
+    chats.sort((a,b) => (a.message.time>b.message.time)?-1:((a.message.time<b.message.time)?1:0));
+
+    res.send(chats);
 });
 
-function getChatId(chat_id) {
-    let sql = 'SELECT id FROM chats WHERE chats.chat_id=? LIMIT 1';
-    let args = [chat_id];
-
-    let res = db.query(sql, args);
-
-    if(res.length==0) {
-        return 0;
-    } else {
-        return res[0].id;
-    }
-}
-
-function addChatToDb(chat) {
-    let query = 'INSERT INTO chats (chat_id, first_name, last_name) VALUES (?, ?, ?)';
-    let args = [
-        chat.id, 
-        chat.first_name, 
-        chat.last_name
-    ];
-
-    let res = db.query(query, args);
-
-    return res.insertId;
-}
-
-function insertMessage(id, content) {
-    let query = 'INSERT INTO messages (chat_id, content) VALUES (?, ?)';
-    let args = [
-        id,
-        content,
-    ];
-
-    db.query(query, args);
-}
 
 bot.on('message', msg => {
     if(msg.text=='/start') {
@@ -57,12 +38,14 @@ bot.on('message', msg => {
     let chat_id = msg.chat.id;
     let content = msg.text;
 
-    let id = getChatId(chat_id);
+    let id = db.getChatId(chat_id);
     if(id==0) {
-        id = addChatToDb(msg.chat);
+        id = db.addChatToDb(msg.chat);
     }
 
-    insertMessage(id, content);
+    db.insertMessage(id, content);
 });
 
 bot.on("polling_error", (msg) => console.log(msg));
+
+app.listen(3000);

@@ -1,0 +1,111 @@
+body {
+    background-color: #52504f;
+}
+
+#app {
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    background-color: #969594;
+}
+
+#chat-list-container, #chat-messages-container {
+    height: 100%;
+}
+
+#chat-list-container {
+    position: relative;
+    width: 20%;
+    left: 0%;
+    float: left;
+    border: 3px solid purple;
+
+    .separator {
+        width: auto;
+        color: #5e5e5e;
+    }
+
+    #chat-list-header {
+        position: relative;
+        width: auto;
+        height: 10%;
+        border: 1px solid #7e7e7e;
+    }
+    
+    #chat-list {
+        position: relative;
+        width: auto;
+        height: 90%;
+        overflow: scroll;
+        
+        /* Hide scrollbar */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+        &::-webkit-scrollbar {/* Chrome, Safari and Opera */
+            display: none;
+        }
+
+        .chat {
+            position: relative;
+            width: auto;
+            height: 10%;
+            border: 1px solid darkgrey;
+
+            &:hover {
+                background-color: #b9b9b9;
+            }
+
+            .chat-name {
+                position: absolute;
+                top: 10%;
+                left: 10%;
+                font-size: 20px;
+                color: #292929;
+            }
+
+            .last-message {
+                position: absolute;
+                bottom: 10%;
+                left: 10%;
+                font-size: 15px;
+                color: #5f5f5f;
+                margin-bottom: 0;
+            }
+
+            .not-read-bullet {
+                position: absolute;
+                right: 5%;
+                bottom: 20%;
+                color: #3636ff;
+                visibility: hidden;
+            }
+        }
+    }
+}
+
+
+
+#chat-messages-container {
+    position: relative;
+    width: 80%;
+    right: 0%;
+    float: right;
+    border: 3px solid green;
+
+    #chat-messages-header {
+        position: relative;
+        width: auto;
+        height: 10%;
+        border: 3px solid darkgreen;
+    }
+    
+    #chat-messages {
+        position: relative;
+        width: auto;
+        height: 90%;
+        border: 3px solid lightgreen;
+    }
+}
+
