@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "node .",
     "dev": "nodemon ."
   },
   "repository": {
@@ -22,6 +23,7 @@
     "node-sass": "^5.0.0",
     "node-telegram-bot-api": "^0.51.0",
     "nodemon": "^2.0.6",
+    "socket.io": "^3.0.4",
     "sync-mysql": "^3.0.1"
   }
 }
