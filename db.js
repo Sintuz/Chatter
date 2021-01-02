@@ -23,21 +23,55 @@ function getChatId(chat_id) {
     }
 }
 
+function getChatTelegramId(id) {
+    let sql = 'SELECT chat_id FROM chats WHERE chats.id=? LIMIT 1';
+    let args = [id];
+
+    let res = db.query(sql, args);
+
+    if(res.length==0) {
+        return 0;
+    } else {
+        return res[0].chat_id;
+    }
+}
+
 function addChatToDb(chat) {
-    let query = 'INSERT INTO chats (chat_id, first_name, last_name) VALUES (?, ?, ?)';
+    let query = 'INSERT INTO chats (chat_id, first_name, last_name, username) VALUES (?, ?, ?, ?)';
     let args = [
-        chat.id, 
-        chat.first_name, 
-        chat.last_name
+        chat.id,
+        chat.first_name?chat.first_name:' ',
+        chat.last_name?chat.last_name:' ',
+        chat.username?chat.username:' '
     ];
+
+    console.log(args)
 
     let res = db.query(query, args);
 
     return res.insertId;
 }
 
+function insertTelegramMessage(id, content) {
+    let query = 'INSERT INTO messages (chat_id, content, from_telegram) VALUES (?, ?, true)';
+    let args = [
+        id,
+        content,
+    ];
+
+    db.query(query, args);
+
+    query = 'UPDATE chats SET has_unread=true WHERE chats.id=? ';
+    args = [
+        id
+    ];
+
+    db.query(query, args);
+}
+
 function insertMessage(id, content) {
-    let query = 'INSERT INTO messages (chat_id, content) VALUES (?, ?)';
+    inserting=true;
+    let query = 'INSERT INTO messages (chat_id, content, from_telegram) VALUES (?, ?, false)';
     let args = [
         id,
         content,
@@ -53,7 +87,7 @@ function getChats() {
 }
 
 function getMessages(id, start, end) {
-    let query = 'SELECT content FROM messages WHERE messages.chat_id=? ORDER BY time DESC LIMIT ?, ?';
+    let query = 'SELECT chat_id, content, time, from_telegram FROM messages WHERE messages.chat_id=? ORDER BY id DESC LIMIT ?, ?';
     let args = [
         id,
         start,
@@ -72,6 +106,15 @@ function getChatStatus(id) {
     return db.query(query, args)[0].has_unread;
 }
 
+function viewChat(id) {
+    let query = 'UPDATE chats SET has_unread=false WHERE chats.id=? ';
+    let args = [
+        id
+    ];
+
+    db.query(query, args);
+}
+
 function getLastMessageTime(id) {
     let query = 'SELECT time FROM messages WHERE messages.chat_id=? ORDER BY messages.time DESC LIMIT 1';
     let args = [
@@ -83,10 +126,13 @@ function getLastMessageTime(id) {
 
 module.exports = {
     getChatId,
+    getChatTelegramId,
     addChatToDb,
+    insertTelegramMessage,
     insertMessage,
     getChats,
     getMessages,
     getChatStatus,
+    viewChat,
     getLastMessageTime
 };
