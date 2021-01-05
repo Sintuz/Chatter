@@ -3,6 +3,8 @@ let chats;
 const packet_size=20;
 let start;
 let selectedChat=0;
+let endMessage;
+let loading;
 
 function sortByDate(obj) {
     return obj.sort((a,b) => (a.time>b.time)?-1:((a.time<b.time)?1:0));
@@ -45,12 +47,12 @@ function newMessage(message) {
 
     let time = '';
 
-    if(date.getDay() == now.getDay() && date.getMonth() == now.getMonth() && date.getFullYear() == now.getFullYear()) {
+    if(date.getDate() == now.getDate() && date.getMonth() == now.getMonth() && date.getFullYear() == now.getFullYear()) {
         time = `${date.getHours()}:${date.getMinutes()}`
     } else if(date.getFullYear() == now.getFullYear()) {
-        time = `${date.getDay()}-${date.getMonth()}`
+        time = `${date.getDate()}-${date.getMonth()+1}`
     } else {
-        time = `${date.getDay()}-${date.getMonth()}-${date.getFullYear()}`
+        time = `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`
     }
 
 
@@ -67,22 +69,32 @@ function newMessage(message) {
 
 function getNextMessages(id) {
 
+    start=start+packet_size;
+
     $.post('get_messages', 
     {
         "chat_id": id,
-        "start": start,
-        "end": start+packet_size-1
-    }, 
+        "start": start-1,
+        "end": start+packet_size
+    },
     (data) => {
         let messages = data;
+
+        if(messages.length==0) endMessage=true;
 
         messages.forEach((message) => {
             $("#chat-messages").prepend(newMessage(message));
         });
+        loading=false;
     });
 }
 
 function selectChat(self) {
+
+    start=0;
+    endMessage=false;
+    loading=false;
+
     $('#chat-name').text($(self).children('.chat-name').html());
     $("#chat-messages").empty();
 
@@ -106,28 +118,7 @@ function selectChat(self) {
         $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
     });
 
-    start=packet_size;
 
-}
-
-function updateSearchList() {
-    let toSearch = $('#search-input').val();
-    if(toSearch!='') {
-        console.log(toSearch)
-        chats.forEach((el, i) => {
-            if(chats[i].id.toString().includes(toSearch)) {
-                chats[i].visible = true;
-            } else {
-                chats[i].visible = false;
-            }
-        });
-    } else {
-        chats.forEach((el, i) => {
-            chats[i].visible = true;
-        });
-    }
-
-    updateSearchList();
 }
 
 function sendMessage() {
@@ -145,16 +136,11 @@ function sendMessage() {
 }
 
 socket.on('chat', (data) => {
-
-    console.log(chats)
     chats.unshift({
         'id': data.id,
         'time': new Date(),
         'visible': true
     });
-
-    console.log(chats)
-
 });
 
 socket.on('message', (data) => {
@@ -190,8 +176,6 @@ socket.on('view-chat', (data) => {
 
 $(document).ready(() => {
 
-    //$('#search-input').on('', updateSearchList);
-
     $.post('/get_chats', (data) => {
         chats=data;
         updateChatList();
@@ -200,6 +184,13 @@ $(document).ready(() => {
     $('#message-input').on('keyup', (e) => {
         if (e.key === 'Enter' || e.keyCode === 13) {
             sendMessage();
+        }
+    });
+
+    $('#chat-messages').scroll((e) => {
+        if(!loading && !endMessage && $('#chat-messages').scrollTop()<30) {
+            loading = true;
+            getNextMessages(selectedChat);
         }
     });
 

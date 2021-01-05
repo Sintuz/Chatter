@@ -7,11 +7,11 @@ p {
 }
 
 #app {
-    width: 80%;
-    height: 80%;
+    width: 90%;
+    height: 90%;
     position: absolute;
-    top: 10%;
-    left: 10%;
+    top: 5%;
+    left: 5%;
     background-color: #969594;
 }
 
@@ -25,31 +25,11 @@ p {
     left: 0%;
     float: left;
     border: 3px solid purple;
-
-    .separator {
-        width: auto;
-        color: #5e5e5e;
-    }
-
-    #chat-list-header {
-        position: relative;
-        width: auto;
-        height: 10%;
-        border: 1px solid #7e7e7e;
-
-        #search-chat {
-            position: relative;
-            width: 80%;
-            height: 50%;
-            left: 10%;
-            top: 25%;
-        }
-    }
     
     #chat-list {
         position: relative;
         width: auto;
-        height: 90%;
+        height: 100%;
         overflow: scroll;
         
         /* Hide scrollbar */
@@ -84,6 +64,7 @@ p {
                 font-size: 15px;
                 color: #5f5f5f;
                 margin-bottom: 0;
+                overflow: hidden;
             }
 
             .not-read-bullet {
@@ -146,7 +127,8 @@ p {
 
             .baloon {
                 width: fit-content;
-                max-width: 40%;
+                max-width: 80%;
+                min-width: 30%;
                 padding: 0px 10px 0px;
                 border-radius: 5px;
             }
