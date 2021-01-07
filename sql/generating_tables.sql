@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 30, 2020 at 12:10 PM
+-- Generation Time: Jan 07, 2021 at 08:02 AM
 -- Server version: 10.3.27-MariaDB-0+deb10u1
 -- PHP Version: 7.3.19-1~deb10u1
 
@@ -34,7 +34,9 @@ CREATE TABLE `chats` (
   `chat_id` int(11) NOT NULL,
   `banned` tinyint(1) NOT NULL DEFAULT 0,
   `first_name` varchar(50) NOT NULL,
-  `last_name` varchar(50) NOT NULL
+  `last_name` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `has_unread` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -47,7 +49,8 @@ CREATE TABLE `messages` (
   `id` int(11) NOT NULL,
   `chat_id` int(11) NOT NULL,
   `content` text NOT NULL,
-  `time` datetime NOT NULL DEFAULT current_timestamp()
+  `time` datetime NOT NULL DEFAULT current_timestamp(),
+  `from_telegram` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
