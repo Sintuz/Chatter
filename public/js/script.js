@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:3000');
+const socket = io.connect(window.location.origin);
 let chats;
 const packet_size=20;
 let start;
