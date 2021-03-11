@@ -1,0 +1,6 @@
+{
+	"_comment": "remove this element, rename the file to users.json and list all users name in the array below",
+	"usernames": [
+		"STRING NAMES OF THE ENABLED USERS"
+	]
+}
