@@ -29,7 +29,7 @@ USE `chatter`;
 -- Table structure for table `chats`
 --
 
-CREATE TABLE `chats` (
+CREATE TABLE IF NOT EXISTS `chats` (
   `id` int(11) NOT NULL,
   `chat_id` int(11) NOT NULL,
   `banned` tinyint(1) NOT NULL DEFAULT 0,
@@ -45,7 +45,7 @@ CREATE TABLE `chats` (
 -- Table structure for table `messages`
 --
 
-CREATE TABLE `messages` (
+CREATE TABLE IF NOT EXISTS `messages` (
   `id` int(11) NOT NULL,
   `chat_id` int(11) NOT NULL,
   `content` text NOT NULL,
