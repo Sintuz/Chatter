@@ -61,16 +61,16 @@ CREATE TABLE IF NOT EXISTS `messages` (
 -- Indexes for table `chats`
 --
 ALTER TABLE `chats`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `chat_id_index` (`chat_id`) USING BTREE;
+  ADD PRIMARY KEY IF NOT EXISTS (`id`),
+  ADD UNIQUE KEY IF NOT EXISTS `chat_id_index` (`chat_id`) USING BTREE;
 
 --
 -- Indexes for table `messages`
 --
 ALTER TABLE `messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `chat_id_index` (`chat_id`) USING BTREE,
-  ADD KEY `time_index` (`time`) USING BTREE;
+  ADD PRIMARY KEY IF NOT EXISTS (`id`),
+  ADD KEY IF NOT EXISTS `chat_id_index` (`chat_id`) USING BTREE,
+  ADD KEY IF NOT EXISTS `time_index` (`time`) USING BTREE;
 
 --
 -- AUTO_INCREMENT for dumped tables
