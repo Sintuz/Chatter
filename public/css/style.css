@@ -19,13 +19,13 @@ p {
   position: relative;
   width: 20%;
   left: 0%;
-  float: left;
-  border: 3px solid purple; }
+  float: left; }
   #chat-list-container #chat-list {
     position: relative;
     width: auto;
     height: 100%;
     overflow: scroll;
+    background-color: lightblue;
     /* Hide scrollbar */
     -ms-overflow-style: none;
     /* IE and Edge */
