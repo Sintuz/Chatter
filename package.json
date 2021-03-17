@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "dev": "nodemon ."
+    "dev": "npx node-sass --include-path sass ./scss/style.scss ./public/css/style.css && nodemon ."
   },
   "repository": {
     "type": "git",
