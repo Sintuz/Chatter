@@ -22,7 +22,7 @@ const app = express();
 const server = app.listen(3000);
 const io = require('socket.io')(server);
 
-app.use(session({ secret: 'xctg34fdtf367gsx67s32gf73d', resave: false, saveUninitialized: false }));
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
 
 app.use(passport.initialize());
 app.use(passport.session());
