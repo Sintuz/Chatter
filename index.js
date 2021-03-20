@@ -79,8 +79,10 @@ app.get("/login-baldini",
 		if (users.includes(req.user.name)) {
 			res.redirect("/");
 		} else {
-			req.session.destroy();
-			res.redirect("/");
+			samlStrategy.logout(req, function(err, requestUrl) {
+				req.logout();
+				res.redirect(requestUrl);
+			});
 		}
 	}
 );
@@ -91,8 +93,10 @@ app.post("/login-baldini/callback",
 		if (users.includes(req.user.name)) {
 			res.redirect("/");
 		} else {
-			req.session.destroy();
-			res.redirect("/");
+			samlStrategy.logout(req, function(err, requestUrl) {
+				req.logout();
+				res.redirect(requestUrl);
+			});
 		}
 	}
 );
