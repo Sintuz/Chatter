@@ -15,14 +15,15 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const db = require('./db');
 
 const express = require('express');
-const session = require('express-session');
+const session = require('express-session')({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false });
 const bodyParser = require('body-parser');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const app = express();
 const server = app.listen(3000);
 const io = require('socket.io')(server);
+const sharedsession = require("express-socket.io-session");
 
-app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(session);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -72,7 +73,7 @@ app.get("/metadata", (req, res) => {
 		)
 	);
 });
-//req.user.name
+
 app.get("/login-baldini",
 	passport.authenticate("samlStrategy", { failureRedirect: "/error", failureFlash: true }),
 	(req, res) => {
@@ -167,7 +168,15 @@ bot.on('message', msg => {
 	}
 });
 
+io.use(sharedsession(session, {
+	autoSave: true
+}));
+
 io.sockets.on('connection', (socket) => {
+
+	if(!socket.handshake.session.passport.user) {
+		socket.disconnect();
+	}
 
 	socket.on('message', (data) => {
 		io.sockets.emit('message', data);
