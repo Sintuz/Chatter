@@ -145,7 +145,7 @@ bot.on('message', msg => {
 	if (msg.text) {
 
 		if (msg.text == '/start') {
-			bot.sendMessage(msg.chat.id, 'Benvenuto/a alla chat di supporto per l\'ITIS NUllo Baldini, per contatare i rappresentanti di istituto continua a scrivere in questa chat.');
+			bot.sendMessage(msg.chat.id, 'Benvenuto/a nello sportello anonimo dell\'ITIS Nullo Baldini! Noi rappresentanti, durante la conversazione, non leggeremo il tuo nome e infatti ti vedremo come un numero. Ma non dimenticare che per episodi gravi o particolari possiamo risalire al tuo nome!');
 			return;
 		}
 
