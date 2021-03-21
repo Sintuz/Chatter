@@ -75,12 +75,12 @@ app.get("/metadata", (req, res) => {
 });
 
 app.get("/login-baldini",
-	passport.authenticate("samlStrategy", { failureRedirect: "/error", failureFlash: true }),
+	passport.authenticate("samlStrategy", { failureRedirect: "/", failureFlash: true }),
 	(req, res) => {
 		if (users.includes(req.user.name)) {
 			res.redirect("/");
 		} else {
-			samlStrategy.logout(req, function(err, requestUrl) {
+			samlStrategy.logout(req, function (err, requestUrl) {
 				req.logout();
 				res.redirect(requestUrl);
 			});
@@ -89,12 +89,12 @@ app.get("/login-baldini",
 );
 
 app.post("/login-baldini/callback",
-	passport.authenticate("samlStrategy", { failureRedirect: "/error", failureFlash: true }),
+	passport.authenticate("samlStrategy", { failureRedirect: "/", failureFlash: true }),
 	(req, res) => {
 		if (users.includes(req.user.name)) {
 			res.redirect("/");
 		} else {
-			samlStrategy.logout(req, function(err, requestUrl) {
+			samlStrategy.logout(req, function (err, requestUrl) {
 				req.logout();
 				res.redirect(requestUrl);
 			});
@@ -102,9 +102,9 @@ app.post("/login-baldini/callback",
 	}
 );
 
-app.get('/error', (req, res) => {
-	res.send(req.flash('error'));
-});
+// app.get('/error', (req, res) => {
+// 	res.send(req.flash('error'));
+// });
 
 app.post('/get_chats', ensureLoggedIn('/login-baldini'), (req, res) => {
 	let chats = db.getChats();
@@ -174,7 +174,7 @@ io.use(sharedsession(session, {
 
 io.sockets.on('connection', (socket) => {
 
-	if(!socket.handshake.session.passport.user) {
+	if (!socket.handshake.session?.passport?.user) {
 		socket.disconnect();
 	}
 
