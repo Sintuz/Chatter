@@ -94,7 +94,7 @@ app.post("/login-baldini/callback",
 		if (users.includes(req.user.name)) {
 			res.redirect("/");
 		} else {
-			samlStrategy.logout(req, function (err, requestUrl) {
+			samlStrategy.logout(req, function (_, requestUrl) {
 				req.logout();
 				res.redirect(requestUrl);
 			});
@@ -106,7 +106,7 @@ app.post("/login-baldini/callback",
 // 	res.send(req.flash('error'));
 // });
 
-app.post('/get_chats', ensureLoggedIn('/login-baldini'), (req, res) => {
+app.post('/get_chats', ensureLoggedIn('/login-baldini'), (_, res) => {
 	let chats = db.getChats();
 
 	chats.forEach((chat, i) => {
@@ -123,13 +123,19 @@ app.post('/get_messages', ensureLoggedIn('/login-baldini'), (req, res) => {
 	let body = req.body;
 	let messages = db.getMessages(body.chat_id, parseInt(body.start), parseInt(body.end));
 
-	messages.forEach((message, i) => {
+	// Don't define varibles you're never going to use
+	messages.forEach((_, i) => {
 		messages[i].time = new Date(messages[i].time);
 	});
 
 	res.send(messages);
 });
 
+
+/*
+ * [Don't steal code without reference :)] Credits to:
+ * https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript 
+ */
 function escapeMessage(message) {
 	return message
 		.replace(/&/g, "&amp;")
@@ -140,31 +146,30 @@ function escapeMessage(message) {
 		.replace(/[^\A-Za-z0-9\,\.;:\! \+/\*=_@&#()-]/g, '');
 }
 
-bot.on('message', msg => {
-
-	if (msg.text) {
-
-		if (msg.text == '/start') {
-			bot.sendMessage(msg.chat.id, 'Benvenuto/a nello sportello anonimo dell\'ITIS Nullo Baldini! Noi rappresentanti, durante la conversazione, non leggeremo il tuo nome e infatti ti vedremo come un numero. Ma non dimenticare che per episodi gravi o particolari possiamo risalire al tuo nome!');
+// Don't randomly-short names without a reason.
+bot.on('message', message => {
+	if (message.text) {
+		if (message.text === '/start') {
+			bot.sendMessage(msg.chat.id, 'Benvenuto/a nello sportello anonimo dell\'ITIS Nullo Baldini!\n' +
+			'Noi rappresentanti, durante la conversazione, non leggeremo il tuo nome e infatti ti vedremo come un numero.\n' +
+			'Non dimenticare che per episodi gravi o particolari possiamo risalire al tuo nome!');
+			// At least the italian grammar, you should never start a sentence with "Ma".
 			return;
 		}
 
-		let chat_id = msg.chat.id;
-		let content = escapeMessage(msg.text);
+		let chat_id = message.chat.id;
+		let content = escapeMessage(message.text);
 
 		if (content.length > 0) {
-
 			let id = db.getChatId(chat_id);
 			if (id == 0) {
-				id = db.addChatToDb(msg.chat);
+				id = db.addChatToDb(message.chat);
 				io.sockets.emit('chat', { 'id': id });
 			}
 
 			db.insertTelegramMessage(id, content);
 			io.sockets.emit('message', db.getMessages(id, 0, 1)[0]);
-
 		}
-
 	}
 });
 
@@ -187,7 +192,6 @@ io.sockets.on('connection', (socket) => {
 			db.insertMessage(data.chat_id, data.content);
 			bot.sendMessage(db.getChatTelegramId(data.chat_id), data.content);
 		}
-
 	});
 
 	socket.on('view-chat', (data) => {
@@ -197,4 +201,4 @@ io.sockets.on('connection', (socket) => {
 	});
 })
 
-bot.on("polling_error", (msg) => console.log(msg));
+bot.on("polling_error", (message) => console.log(message));
