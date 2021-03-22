@@ -1,11 +1,4 @@
--- phpMyAdmin SQL Dump
--- version 5.0.4
--- https://www.phpmyadmin.net/
---
--- Host: localhost
--- Generation Time: Jan 07, 2021 at 08:02 AM
--- Server version: 10.3.27-MariaDB-0+deb10u1
--- PHP Version: 7.3.19-1~deb10u1
+/* You should remove any reference to the export method, less info an attacker has, the better it is. */
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -62,14 +55,14 @@ CREATE TABLE IF NOT EXISTS `messages` (
 --
 ALTER TABLE `chats`
   ADD PRIMARY KEY IF NOT EXISTS (`id`),
-  ADD UNIQUE KEY IF NOT EXISTS `chat_id_index` (`chat_id`) USING BTREE;
+  ADD UNIQUE KEY IF NOT EXISTS `chats_id_index` (`chat_id`) USING BTREE;
 
 --
 -- Indexes for table `messages`
 --
 ALTER TABLE `messages`
   ADD PRIMARY KEY IF NOT EXISTS (`id`),
-  ADD KEY IF NOT EXISTS `chat_id_index` (`chat_id`) USING BTREE,
+  ADD KEY IF NOT EXISTS `messages_chat_id_index` (`chat_id`) USING BTREE,
   ADD KEY IF NOT EXISTS `time_index` (`time`) USING BTREE;
 
 --
@@ -80,13 +73,13 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `chats`
 --
 ALTER TABLE `chats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
