@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const mySql = require('sync-mysql');
 
-// connecting to db
+// Connecting to db
 const db = new mySql({
 	host: process.env.DB_HOST,
 	user: process.env.DB_USERNAME,
@@ -11,7 +11,8 @@ const db = new mySql({
 });
 
 function getChatId(chat_id) {
-	let sql = 'SELECT id FROM chats WHERE chats.chat_id=? LIMIT 1';
+	// Don't redefine the table in the arguments.
+	let sql = 'SELECT id FROM chats WHERE chat_id = ? LIMIT 1';
 	let args = [chat_id];
 
 	let res = db.query(sql, args);
@@ -24,7 +25,7 @@ function getChatId(chat_id) {
 }
 
 function getChatTelegramId(id) {
-	let sql = 'SELECT chat_id FROM chats WHERE chats.id=? LIMIT 1';
+	let sql = 'SELECT chat_id FROM chats WHERE id = ? LIMIT 1';
 	let args = [id];
 
 	let res = db.query(sql, args);
@@ -38,11 +39,13 @@ function getChatTelegramId(id) {
 
 function addChatToDb(chat) {
 	let query = 'INSERT INTO chats (chat_id, first_name, last_name, username) VALUES (?, ?, ?, ?)';
+
+	// Why didn't you set up "nullable" in the db?
 	let args = [
 		chat.id,
-		chat.first_name ? chat.first_name : ' ',
-		chat.last_name ? chat.last_name : ' ',
-		chat.username ? chat.username : ' '
+		chat.first_name ?? ' ',
+		chat.last_name ?? ' ',
+		chat.username ?? ' '
 	];
 
 	console.log(args)
@@ -60,10 +63,10 @@ function insertTelegramMessage(id, content) {
 	];
 
 	db.query(query, args);
-
-	query = 'UPDATE chats SET has_unread=true WHERE chats.id=? ';
+	
+	query = 'UPDATE chats SET has_unread=true WHERE id = ? ';
 	args = [
-		id
+		id,
 	];
 
 	db.query(query, args);
@@ -87,7 +90,7 @@ function getChats() {
 }
 
 function getMessages(id, start, end) {
-	let query = 'SELECT chat_id, content, time, from_telegram FROM messages WHERE messages.chat_id=? ORDER BY id DESC LIMIT ?, ?';
+	let query = 'SELECT chat_id, content, time, from_telegram FROM messages WHERE chat_id = ? ORDER BY id DESC LIMIT ?, ?';
 	let args = [
 		id,
 		start,
@@ -98,27 +101,27 @@ function getMessages(id, start, end) {
 }
 
 function getChatStatus(id) {
-	let query = 'SELECT has_unread FROM chats WHERE chats.id=? ';
+	let query = 'SELECT has_unread FROM chats WHERE id = ?';
 	let args = [
-		id
+		id,
 	];
 
 	return db.query(query, args)[0].has_unread;
 }
 
 function viewChat(id) {
-	let query = 'UPDATE chats SET has_unread=false WHERE chats.id=? ';
+	let query = 'UPDATE chats SET has_unread=false WHERE id = ?';
 	let args = [
-		id
+		id,
 	];
 
 	db.query(query, args);
 }
 
 function getLastMessageTime(id) {
-	let query = 'SELECT time FROM messages WHERE messages.chat_id=? ORDER BY messages.time DESC LIMIT 1';
+	let query = 'SELECT time FROM messages WHERE chat_id=? ORDER BY time DESC LIMIT 1';
 	let args = [
-		id
+		id,
 	];
 
 	return db.query(query, args)[0].time;
