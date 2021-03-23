@@ -131,13 +131,7 @@ app.post('/get_messages', ensureLoggedIn('/login-baldini'), (req, res) => {
 });
 
 function escapeMessage(message) {
-	return message
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#039;")
-		.replace(/[^\A-Za-z0-9\,\.;:\! \+/\*=_@&#()-]/g, '');
+	return message.replace(/[^\A-Za-z0-9àáèéìíòóùú\\\,\.;:\! \+/\*=_@&#\(\)\[\]\{\}\?-]/g, '');
 }
 
 bot.on('message', msg => {
